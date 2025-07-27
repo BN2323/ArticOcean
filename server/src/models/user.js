@@ -4,8 +4,8 @@ const bcrypt = require("bcrypt");
 module.exports = (sequelize) => {
   const User = sequelize.define("User", {
     id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
+      type: DataTypes.INTEGER,   // use INTEGER instead of UUID
+      autoIncrement: true,       // enable auto increment
       primaryKey: true,
     },
     username: {
@@ -24,11 +24,17 @@ module.exports = (sequelize) => {
     hooks: {
       beforeCreate: async (user) => {
         user.password = await bcrypt.hash(user.password, 10);
+      },
+      beforeUpdate: async (user) => {
+        if (user.changed("password")) {
+          user.password = await bcrypt.hash(user.password, 10);
+        }
       }
     }
   });
 
   User.prototype.validatePassword = async function(password) {
+    console.log("Validating password for user:", this.username);
     return await bcrypt.compare(password, this.password);
   };
 

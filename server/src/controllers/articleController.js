@@ -1,4 +1,4 @@
-const { Article, User, Like, Bookmark } = require("../models");
+const { Article, User, Like, Bookmark , Comment} = require("../models");
 
 exports.createArticle = async (req, res) => {
   try {
@@ -11,12 +11,71 @@ exports.createArticle = async (req, res) => {
 };
 
 exports.getArticle = async (req, res) => {
+  console.log('body' , req.body);
   try {
+    console.log("Fetching article with ID:", req.params.id);
+    console.log("Current user ID:", req.user?.id);
     const article = await Article.findByPk(req.params.id, {
-      include: [{ model: User, as: "author", attributes: ["id", "username", "name", "avatar"] }]
+      include: [
+        {
+          model: Comment,
+          as: "comments", // must match the association alias
+          include: [
+            {
+              model: User,
+              as: "commenter", // must match the alias
+              attributes: ["id", "username", "avatar"],
+            },
+          ],
+          order: [["createdAt", "ASC"]],
+        },
+        {
+          model: User,
+          as: "author",
+          attributes: ["id", "username", "name", "avatar"],
+        },
+        {
+          model: User,
+          as: "likers", // users who liked
+          where: { id: req.user.id },
+          required: false,
+          // attributes: [],
+          through: {
+            attributes: ["id"],
+          },
+        },
+        {
+          model: User,
+          as: "bookmarkers", // users who bookmarked
+          where: { id: req.user.id },
+          required: false,
+          // attributes: [],
+          through: {
+            attributes: ["id"],
+          },
+        },
+      ],
     });
+
+    console.log("Article fetched:", article ? article.toJSON() : "Not found");
+
     if (!article) return res.status(404).json({ message: "Article not found" });
-    res.json(article);
+
+    const articleJSON = article.toJSON();
+
+    // Count total likes and bookmarks
+    articleJSON.likeCount = articleJSON.likers ? articleJSON.likers.length : 0;
+    articleJSON.bookmarkCount = articleJSON.bookmarkers ? articleJSON.bookmarkers.length : 0;
+
+    // Check if current user liked or bookmarked
+    articleJSON.isLiked = articleJSON.likers && articleJSON.likers.some(user => user.id === req.user.id);
+    articleJSON.isBookmarked = articleJSON.bookmarkers && articleJSON.bookmarkers.some(user => user.id === req.user.id);
+
+    // Remove user arrays to keep response clean
+    delete articleJSON.likers;
+    delete articleJSON.bookmarkers;
+
+    res.json(articleJSON);
   } catch (error) {
     res.status(500).json({ message: "Error fetching article", error });
   }

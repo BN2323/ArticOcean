@@ -8,6 +8,8 @@ exports.likeArticle = async (req, res) => {
     if (!created) {
       return res.status(400).json({ message: "Already liked" });
     }
+    console.log("Like created:", like);
+    console.log("Created", created);
     res.json({ message: "Article liked" });
   } catch (error) {
     res.status(500).json({ message: "Error liking article", error });

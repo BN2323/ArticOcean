@@ -7,7 +7,7 @@ module.exports = {
     DB_USER: process.env.DB_USER,
     DB_PASS: process.env.DB_PASS,
     DB_HOST: process.env.DB_HOST,
-    DB_DIALECT: "mysql",  // changed from postgres to mysql
+    DB_DIALECT: "mysql",
   },
-  JWT_SECRET: process.env.JWT_SECRET || "your_jwt_secret",
+  JWT_SECRET: process.env.JWT_SECRET || "mysecretkey",
 };

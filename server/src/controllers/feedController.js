@@ -3,20 +3,30 @@ const { Op } = require("sequelize");
 
 exports.getFeed = async (req, res) => {
   try {
-    const currentUser = req.user;
+    const currentUserId = req.user.id; // from auth middleware
 
-    // 1. Get IDs of followed users
-    const followings = await currentUser.getFollowing({ attributes: ["id"] });
-    const followingIds = followings.map(user => user.id);
+    // Get the list of IDs the current user follows
+    const following = await Follow.findAll({
+      where: { followerId: currentUserId },
+      attributes: ['followingId']
+    });
 
-    // 2. Get articles from followed users
+    const followingIds = following.map(f => f.followingId);
+
+    // Query articles from followed users
     const followedArticles = await Article.findAll({
       where: { authorId: { [Op.in]: followingIds } },
       include: [{ model: User, as: "author", attributes: ["id", "username", "name", "avatar"] }],
-      order: [["createdAt", "DESC"]],
     });
 
-    res.json({ feed: followedArticles });
+    // Query articles from other users
+    const otherArticles = await Article.findAll({
+      where: { authorId: { [Op.notIn]: followingIds } },
+      include: [{ model: User, as: "author", attributes: ["id", "username", "name", "avatar"] }],
+    });
+
+    res.json({ followedArticles, otherArticles });
+
   } catch (err) {
     res.status(500).json({ message: "Failed to load feed", error: err });
   }
