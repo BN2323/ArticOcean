@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
-import { User, Bell, Shield, Palette, Globe, Download } from "lucide-react";
+import { User, Bell, Shield, Palette } from "lucide-react";
 
 const Settings = () => {
   const [notifications, setNotifications] = useState(true);
@@ -53,7 +53,6 @@ const Settings = () => {
                 <User size={20} />
                 <h2 className="text-xl font-semibold text-foreground">Profile Settings</h2>
               </div>
-              
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -69,14 +68,12 @@ const Settings = () => {
                     <Input id="lastName" placeholder="Doe" className="mt-1" />
                   </div>
                 </div>
-                
                 <div>
                   <Label htmlFor="username" className="text-sm font-medium text-foreground">
                     Username
                   </Label>
                   <Input id="username" placeholder="@johndoe" className="mt-1" />
                 </div>
-                
                 <div>
                   <Label htmlFor="bio" className="text-sm font-medium text-foreground">
                     Bio
@@ -92,7 +89,6 @@ const Settings = () => {
                 <Bell size={20} />
                 <h2 className="text-xl font-semibold text-foreground">Notifications</h2>
               </div>
-              
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -101,9 +97,7 @@ const Settings = () => {
                   </div>
                   <Switch checked={notifications} onCheckedChange={setNotifications} />
                 </div>
-                
                 <Separator />
-                
                 <div className="flex items-center justify-between">
                   <div>
                     <Label className="text-sm font-medium text-foreground">Push Notifications</Label>
@@ -120,7 +114,6 @@ const Settings = () => {
                 <Shield size={20} />
                 <h2 className="text-xl font-semibold text-foreground">Privacy & Security</h2>
               </div>
-              
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -129,9 +122,7 @@ const Settings = () => {
                   </div>
                   <Switch checked={publicProfile} onCheckedChange={setPublicProfile} />
                 </div>
-                
                 <Separator />
-                
                 <div className="flex items-center justify-between">
                   <div>
                     <Label className="text-sm font-medium text-foreground">Show Reading History</Label>
@@ -148,7 +139,6 @@ const Settings = () => {
                 <Palette size={20} />
                 <h2 className="text-xl font-semibold text-foreground">Appearance</h2>
               </div>
-              
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -157,9 +147,7 @@ const Settings = () => {
                   </div>
                   <Switch checked={darkMode} onCheckedChange={setDarkMode} />
                 </div>
-                
                 <Separator />
-                
                 <div>
                   <Label className="text-sm font-medium text-foreground mb-2 block">Language</Label>
                   <select className="w-full p-2 border border-border rounded-md bg-background text-foreground">

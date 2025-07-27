@@ -1,8 +1,8 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
 import { Eye, Save, Send, Image, Bold, Italic, Link as LinkIcon } from "lucide-react";
 
 const Write = () => {
@@ -10,14 +10,20 @@ const Write = () => {
   const [content, setContent] = useState("");
   const [thumbnail, setThumbnail] = useState("");
   const [isPreview, setIsPreview] = useState(false);
+  const [visibility, setVisibility] = useState("Public");
+  const [tags, setTags] = useState("");
 
   const handlePublish = () => {
-    // Handle publish logic
-    console.log("Publishing article:", { title, content, thumbnail });
+    console.log("Publishing article:", {
+      title,
+      content,
+      thumbnail,
+      visibility,
+      tags: tags.split(",").map(t => t.trim()).filter(Boolean),
+    });
   };
 
   const handleSaveDraft = () => {
-    // Handle save draft logic
     console.log("Saving draft:", { title, content });
   };
 
@@ -31,8 +37,8 @@ const Write = () => {
             <p className="text-muted-foreground">Share your thoughts with the Deep community</p>
           </div>
           <div className="flex items-center space-x-3">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => setIsPreview(!isPreview)}
               className="transition-smooth"
             >
@@ -43,7 +49,7 @@ const Write = () => {
               <Save size={18} className="mr-2" />
               Save Draft
             </Button>
-            <Button 
+            <Button
               onClick={handlePublish}
               className="gradient-primary text-primary-foreground shadow-elegant"
               disabled={!title.trim() || !content.trim()}
@@ -60,7 +66,6 @@ const Write = () => {
             <Card className="border-border shadow-elegant">
               {!isPreview ? (
                 <div className="p-8">
-                  {/* Title Input */}
                   <Input
                     placeholder="Article title..."
                     value={title}
@@ -68,7 +73,6 @@ const Write = () => {
                     className="text-3xl font-bold border-none p-0 mb-6 placeholder:text-muted-foreground focus-visible:ring-0 bg-transparent"
                   />
 
-                  {/* Toolbar */}
                   <div className="flex items-center space-x-2 mb-6 pb-4 border-b border-border">
                     <Button variant="ghost" size="sm" className="transition-smooth">
                       <Bold size={16} />
@@ -84,7 +88,6 @@ const Write = () => {
                     </Button>
                   </div>
 
-                  {/* Content Textarea */}
                   <Textarea
                     placeholder="Tell your story..."
                     value={content}
@@ -94,10 +97,9 @@ const Write = () => {
                 </div>
               ) : (
                 <div className="p-8">
-                  {/* Preview Mode */}
                   {thumbnail && (
-                    <img 
-                      src={thumbnail} 
+                    <img
+                      src={thumbnail}
                       alt="Article thumbnail"
                       className="w-full h-64 object-cover rounded-lg mb-6"
                     />
@@ -119,7 +121,6 @@ const Write = () => {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Publishing Options */}
             <Card className="p-6 border-border">
               <h3 className="text-lg font-semibold text-foreground mb-4">Publishing</h3>
               <div className="space-y-4">
@@ -127,31 +128,42 @@ const Write = () => {
                   <label className="text-sm font-medium text-foreground mb-2 block">
                     Visibility
                   </label>
-                  <select className="w-full p-2 border border-border rounded-md bg-background text-foreground">
+                  <select
+                    value={visibility}
+                    onChange={(e) => setVisibility(e.target.value)}
+                    className="w-full p-2 border border-border rounded-md bg-background text-foreground"
+                  >
                     <option>Public</option>
                     <option>Unlisted</option>
                     <option>Private</option>
                   </select>
                 </div>
+
                 <div>
                   <label className="text-sm font-medium text-foreground mb-2 block">
                     Thumbnail
                   </label>
-                  <Input 
-                    placeholder="Image URL..." 
+                  <Input
+                    placeholder="Image URL..."
                     value={thumbnail}
                     onChange={(e) => setThumbnail(e.target.value)}
-                    className="transition-smooth" 
+                    className="transition-smooth"
                   />
                   <p className="text-xs text-muted-foreground mt-1">
                     Add a cover image URL for your article
                   </p>
                 </div>
+
                 <div>
                   <label className="text-sm font-medium text-foreground mb-2 block">
                     Tags
                   </label>
-                  <Input placeholder="Add tags..." className="transition-smooth" />
+                  <Input
+                    placeholder="Add tags..."
+                    value={tags}
+                    onChange={(e) => setTags(e.target.value)}
+                    className="transition-smooth"
+                  />
                   <p className="text-xs text-muted-foreground mt-1">
                     Separate tags with commas
                   </p>
@@ -159,7 +171,6 @@ const Write = () => {
               </div>
             </Card>
 
-            {/* Writing Tips */}
             <Card className="p-6 border-border">
               <h3 className="text-lg font-semibold text-foreground mb-4">Writing Tips</h3>
               <div className="space-y-3 text-sm text-muted-foreground">
@@ -182,14 +193,13 @@ const Write = () => {
               </div>
             </Card>
 
-            {/* Stats */}
             <Card className="p-6 border-border">
               <h3 className="text-lg font-semibold text-foreground mb-4">Article Stats</h3>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Words:</span>
                   <span className="font-medium text-foreground">
-                    {content.split(' ').filter(word => word.length > 0).length}
+                    {content.split(" ").filter(word => word.length > 0).length}
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -199,7 +209,7 @@ const Write = () => {
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Read time:</span>
                   <span className="font-medium text-foreground">
-                    {Math.max(1, Math.ceil(content.split(' ').filter(word => word.length > 0).length / 200))} min
+                    {Math.max(1, Math.ceil(content.split(" ").filter(word => word.length > 0).length / 200))} min
                   </span>
                 </div>
               </div>

@@ -3,24 +3,30 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from "@/components/ui/card";
 
 const SignUp = () => {
-  const [formData, setFormData] = useState({ 
-    name: "", 
-    email: "", 
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
     password: "",
     confirmPassword: ""
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords don't match!");
       return;
     }
     console.log("Sign up attempt:", formData);
-    // TODO: Implement actual authentication
+    // TODO: Send data to backend
   };
 
   return (
@@ -41,7 +47,9 @@ const SignUp = () => {
                 type="text"
                 placeholder="Enter your full name"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 required
               />
             </div>
@@ -52,7 +60,9 @@ const SignUp = () => {
                 type="email"
                 placeholder="Enter your email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
                 required
               />
             </div>
@@ -63,7 +73,9 @@ const SignUp = () => {
                 type="password"
                 placeholder="Create a password"
                 value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
                 required
               />
             </div>
@@ -74,28 +86,38 @@ const SignUp = () => {
                 type="password"
                 placeholder="Confirm your password"
                 value={formData.confirmPassword}
-                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    confirmPassword: e.target.value
+                  })
+                }
                 required
               />
             </div>
-            <Button type="submit" className="w-full gradient-primary text-primary-foreground">
+            <Button
+              type="submit"
+              className="w-full gradient-primary text-primary-foreground"
+            >
               Create Account
             </Button>
           </form>
-          
+
           <div className="mt-6 text-center text-sm">
-            <span className="text-muted-foreground">Already have an account? </span>
-            <Link 
-              to="/signin" 
+            <span className="text-muted-foreground">
+              Already have an account?{" "}
+            </span>
+            <Link
+              to="/signin"
               className="text-primary hover:underline font-medium"
             >
               Sign in
             </Link>
           </div>
-          
+
           <div className="mt-4 text-center">
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               className="text-sm text-muted-foreground hover:text-foreground"
             >
               ← Back to home
