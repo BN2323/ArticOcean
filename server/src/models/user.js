@@ -4,22 +4,50 @@ const bcrypt = require("bcrypt");
 module.exports = (sequelize) => {
   const User = sequelize.define("User", {
     id: {
-      type: DataTypes.INTEGER,   // use INTEGER instead of UUID
-      autoIncrement: true,       // enable auto increment
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
       primaryKey: true,
     },
     username: {
       type: DataTypes.STRING,
       unique: true,
       allowNull: false,
+      validate: {
+        len: {
+          args: [3, 20],
+          msg: "Username must be between 3 and 20 characters.",
+        },
+      },
+    },
+    email: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: false,
+      validate: {
+        isEmail: {
+          msg: "Please provide a valid email address",
+        },
+      },
     },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        len: {
+          args: [6],
+          msg: "Password must be at least 6 characters long",
+        },
+      },
     },
-    name: DataTypes.STRING,
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     bio: DataTypes.TEXT,
     avatar: DataTypes.STRING,
+    location: DataTypes.STRING,
+    joinDate: DataTypes.DATE,   // stored as a Date, format in frontend
+    website: DataTypes.STRING,
   }, {
     hooks: {
       beforeCreate: async (user) => {
@@ -34,7 +62,6 @@ module.exports = (sequelize) => {
   });
 
   User.prototype.validatePassword = async function(password) {
-    console.log("Validating password for user:", this.username);
     return await bcrypt.compare(password, this.password);
   };
 

@@ -1,9 +1,12 @@
 const { Article, User, Like, Bookmark , Comment} = require("../models");
+const generateExcerpt = require("../utils/generateExcerpt");
 
 exports.createArticle = async (req, res) => {
   try {
     const { title, content, thumbnail } = req.body;
-    const article = await Article.create({ title, content, thumbnail, authorId: req.user.id });
+    const excerpt = generateExcerpt(content); // Generate excerpt from content
+    const article = await Article.create({ title, excerpt, content, thumbnail, authorId: req.user.id });
+    console.log("Article created:", article.toJSON());
     res.status(201).json(article);
   } catch (error) {
     res.status(500).json({ message: "Error creating article", error });
@@ -37,7 +40,6 @@ exports.getArticle = async (req, res) => {
         {
           model: User,
           as: "likers", // users who liked
-          where: { id: req.user.id },
           required: false,
           // attributes: [],
           through: {
@@ -47,7 +49,6 @@ exports.getArticle = async (req, res) => {
         {
           model: User,
           as: "bookmarkers", // users who bookmarked
-          where: { id: req.user.id },
           required: false,
           // attributes: [],
           through: {

@@ -7,6 +7,10 @@ module.exports = (sequelize) => {
       autoIncrement: true,       // enable auto increment
       primaryKey: true,
     },
+    excerpt: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
     title: {
       type: DataTypes.STRING,
       allowNull: false,

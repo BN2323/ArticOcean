@@ -16,7 +16,7 @@ exports.addComment = async (req, res) => {
     });
 
     const fullComment = await Comment.findByPk(comment.id, {
-      include: [{ model: User, as: 'author', attributes: ['id', 'username', 'avatar'] }],
+      include: [{ model: User, as: 'commenter', attributes: ['id', 'username', 'avatar'] }],
     });
 
     res.status(201).json(fullComment);
@@ -30,11 +30,33 @@ exports.getComments = async (req, res) => {
     const articleId = req.params.id;
     const comments = await Comment.findAll({
       where: { articleId },
-      include: [{ model: User, as: 'author', attributes: ['id', 'username', 'avatar'] }],
+      include: [{ model: User, as: 'commenter', attributes: ['id', 'username', 'avatar'] }],
       order: [['createdAt', 'ASC']],
     });
     res.json(comments);
   } catch (err) {
     res.status(500).json({ message: "Error fetching comments", error: err });
+  }
+};
+
+exports.deleteComment = async (req, res) => {
+  try {
+    const commentId = req.params.id;
+    const userId = req.user.id;
+
+    const comment = await Comment.findByPk(commentId);
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    // Optional: Only author can delete their comment
+    if (comment.userId !== userId) {
+      return res.status(403).json({ message: "You can only delete your own comment" });
+    }
+
+    await comment.destroy();
+    res.json({ message: "Comment deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Error deleting comment", error: err });
   }
 };
