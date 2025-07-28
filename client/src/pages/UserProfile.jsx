@@ -3,8 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ArticleCard from "@/components/ArticleCard";
-import { useParams, useNavigate } from "react-router-dom";
-import { followUser, unfollowUser } from "../services/articleService";
+import { useParams } from "react-router-dom";
 import {
   MapPin,
   Calendar,
@@ -17,86 +16,45 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import mapArticleToCard from "../utils/mapArticleToCard";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api";
+const API_BASE =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api";
 
-const Profile = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-
-  // Current logged-in user info
-  const [currentUser, setCurrentUser] = useState(null);
-  useEffect(() => {
-    try {
-      const userStr = localStorage.getItem("user");
-      if (userStr) setCurrentUser(JSON.parse(userStr));
-    } catch {
-      setCurrentUser(null);
-    }
-  }, []);
-
+const UserProfile = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
 
+
+  // Get current logged-in user from localStorage
+  let currentUser = null;
+  try {
+    const userStr = localStorage.getItem("user");
+    if (userStr) currentUser = JSON.parse(userStr);
+  } catch {
+    currentUser = null;
+  }
+
   useEffect(() => {
     const fetchProfile = async () => {
-      setLoading(true);
       try {
-        const res = await axios.get(`${API_BASE}/user/${id}`, {
+        const res = await axios.get(`${API_BASE}/user/`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
         setUser(res.data);
-        setIsFollowing(res.data.isFollowed); // Use fetched data directly here
       } catch (err) {
-        setError(err.response?.data?.message || err.message || "Failed to load profile");
+        setError(err.message || "Failed to load profile");
       } finally {
         setLoading(false);
       }
     };
 
     fetchProfile();
-  }, [id]);
+  }, []);
 
-  const handleFollow = async () => {
-    if (!currentUser?.id) {
-      alert("Please login to follow users.");
-      navigate("/login");
-      return;
-    }
-    setButtonLoading(true);
-    try {
-      await followUser(id);
-      setIsFollowing(true);
-      setUser((prev) => ({
-        ...prev,
-        followers: [...(prev.followers || []), currentUser.id],
-      }));
-    } catch (err) {
-      alert(err.response?.data?.message || "Failed to follow user");
-    } finally {
-      setButtonLoading(false);
-    }
-  };
-
-  const handleUnfollow = async () => {
-    setButtonLoading(true);
-    try {
-      await unfollowUser(id);
-      setIsFollowing(false);
-      setUser((prev) => ({
-        ...prev,
-        followers: (prev.followers || []).filter((fid) => fid !== currentUser.id),
-      }));
-    } catch (err) {
-      alert(err.response?.data?.message || "Failed to unfollow user");
-    } finally {
-      setButtonLoading(false);
-    }
-  };
 
   if (loading) return <p>Loading profile...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -120,29 +78,12 @@ const Profile = () => {
             <div className="flex-1">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
                 <div>
-                  <h1 className="text-3xl font-bold text-foreground mb-1">{user.name}</h1>
-                  <p className="text-muted-foreground text-lg">@{user.username}</p>
-                </div>
-                <div className="mt-4">
-                  {currentUser?.id !== user.id && (
-                    isFollowing ? (
-                      <Button
-                        disabled={buttonLoading}
-                        onClick={handleUnfollow}
-                        variant="destructive"
-                      >
-                        {buttonLoading ? "Unfollowing..." : "Unfollow"}
-                      </Button>
-                    ) : (
-                      <Button
-                        disabled={buttonLoading}
-                        onClick={handleFollow}
-                        variant="default"
-                      >
-                        {buttonLoading ? "Following..." : "Follow"}
-                      </Button>
-                    )
-                  )}
+                  <h1 className="text-3xl font-bold text-foreground mb-1">
+                    {user.name}
+                  </h1>
+                  <p className="text-muted-foreground text-lg">
+                    @{user.username}
+                  </p>
                 </div>
               </div>
 
@@ -180,12 +121,14 @@ const Profile = () => {
                 <div className="flex items-center space-x-1">
                   <Users size={16} className="text-muted-foreground" />
                   <span className="font-medium text-foreground">
-                    {user.followers?.length?.toLocaleString() || 0}
+                    {user.followers?.toLocaleString() || 0}
                   </span>
                   <span className="text-muted-foreground">followers</span>
                 </div>
                 <div className="flex items-center space-x-1">
-                  <span className="font-medium text-foreground">{user.following || 0}</span>
+                  <span className="font-medium text-foreground">
+                    {user.following || 0}
+                  </span>
                   <span className="text-muted-foreground">following</span>
                 </div>
               </div>
@@ -198,21 +141,27 @@ const Profile = () => {
           <Card className="p-6 text-center border-border">
             <div className="flex items-center justify-center space-x-2 mb-2">
               <FileText className="text-primary" size={20} />
-              <span className="text-2xl font-bold text-foreground">{user.totalArticles || 0}</span>
+              <span className="text-2xl font-bold text-foreground">
+                {user.totalArticles || 0}
+              </span>
             </div>
             <p className="text-muted-foreground">Articles Published</p>
           </Card>
           <Card className="p-6 text-center border-border">
             <div className="flex items-center justify-center space-x-2 mb-2">
               <Heart className="text-red-500" size={20} />
-              <span className="text-2xl font-bold text-foreground">{user.totalLikes?.toLocaleString() || 0}</span>
+              <span className="text-2xl font-bold text-foreground">
+                {user.totalLikes?.toLocaleString() || 0}
+              </span>
             </div>
             <p className="text-muted-foreground">Total Likes</p>
           </Card>
           <Card className="p-6 text-center border-border">
             <div className="flex items-center justify-center space-x-2 mb-2">
               <Users className="text-primary" size={20} />
-              <span className="text-2xl font-bold text-foreground">{user.followers?.length?.toLocaleString() || 0}</span>
+              <span className="text-2xl font-bold text-foreground">
+                {user.followers?.toLocaleString() || 0}
+              </span>
             </div>
             <p className="text-muted-foreground">Followers</p>
           </Card>
@@ -232,7 +181,9 @@ const Profile = () => {
                 <ArticleCard key={article.id} {...mapArticleToCard(article)} />
               ))
             ) : (
-              <p className="text-muted-foreground text-center">No articles published yet.</p>
+              <p className="text-muted-foreground text-center">
+                No articles published yet.
+              </p>
             )}
           </TabsContent>
 
@@ -240,13 +191,17 @@ const Profile = () => {
             <div className="text-center py-12">
               <Heart className="mx-auto mb-4 text-muted-foreground" size={48} />
               <p className="text-muted-foreground mb-4">Liked articles are private</p>
-              <p className="text-sm text-muted-foreground">Only you can see the articles you've liked</p>
+              <p className="text-sm text-muted-foreground">
+                Only you can see the articles you've liked
+              </p>
             </div>
           </TabsContent>
 
           <TabsContent value="about" className="space-y-6">
             <Card className="p-6 border-border">
-              <h3 className="text-lg font-semibold text-foreground mb-4">About {user.name}</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-4">
+                About {user.name}
+              </h3>
               <div className="space-y-4 text-foreground">
                 <p className="leading-relaxed">{user.bio}</p>
                 <div className="space-y-2 text-sm">
@@ -285,4 +240,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default UserProfile;

@@ -4,7 +4,8 @@ const userController = require("../controllers/userController");
 const authMiddleware = require("../middlewares/authMiddleware");
 const user = require("../models/user");
 
-router.get("/", authMiddleware, userController.getProfile);
+router.get("/:id", authMiddleware, userController.getProfile);
+router.get("/", authMiddleware, userController.getMyProfile);
 router.put("/", authMiddleware, userController.updateProfile);
 
 

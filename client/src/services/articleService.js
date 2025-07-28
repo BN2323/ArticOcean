@@ -31,3 +31,13 @@ export const unbookmarkArticle = async (articleId) => {
 export const addComment = async (articleId, commentData) => {
   return axios.post(`${API_BASE}/${articleId}/comment`, commentData, authHeaders());
 }
+
+// Follow a user by ID
+export const followUser = async (userId) => {
+  return axios.post(`${API_BASE}/user/${userId}/follow`, {}, authHeaders());
+};
+
+// Unfollow a user by ID
+export const unfollowUser = async (userId) => {
+  return axios.delete(`${API_BASE}/user/${userId}/unfollow`, authHeaders());
+};

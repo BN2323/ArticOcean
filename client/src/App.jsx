@@ -14,6 +14,7 @@ import Bookmarks from "./pages/Bookmarks";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
+import UserProfile from "./pages/UserProfile";
 
 // Shared layout wrapper for main app
 const MainLayout = () => (
@@ -44,8 +45,8 @@ const App = () => (
             <Route path="settings" element={<Settings />} />
             <Route path="bookmarks" element={<Bookmarks />} />
             <Route path="article/:id" element={<ArticleView />} />
-            <Route path="profile/:username" element={<Profile />} />
-            <Route path="profile" element={<Profile />} />
+            <Route path="profile/:id" element={<Profile />} />
+            <Route path="profile/" element={<UserProfile />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

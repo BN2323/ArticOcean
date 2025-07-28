@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api";
 
 const SignIn = () => {
   // const [formData, setFormData] = useState({ email: "", password: "" });
@@ -25,7 +26,7 @@ const SignIn = () => {
     setError("");
 
     try {
-      const response = await axios.post("http://localhost:4000/api/auth/login", formData);
+      const response = await axios.post(`${API_BASE}/auth/login`, formData);
       const { token, user } = response.data;
 
       // Save token in localStorage

@@ -115,7 +115,7 @@ const handleBookmark = async () => {
           </Avatar>
           <div className="flex-1">
             <Link
-              to={`/profile/${author.username}`}
+              to={`/profile/${author.id}`}
               className="text-sm font-medium text-foreground hover:text-primary transition-smooth"
             >
               {author.name}

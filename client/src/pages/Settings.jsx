@@ -37,7 +37,7 @@ const Settings = () => {
           },
         });
         setProfile(res.data);
-        setPreviewUrl(res.data.avatarUrl || "");
+        setPreviewUrl(res.data.avatar || ""); // ✅ avatar not avatarUrl
       } catch (err) {
         console.error("Failed to fetch profile", err);
       }
@@ -51,7 +51,7 @@ const Settings = () => {
     if (!file) return;
     setAvatarFile(file);
 
-    // Preview only
+    // Show local preview
     const localUrl = URL.createObjectURL(file);
     setPreviewUrl(localUrl);
   };
@@ -65,16 +65,19 @@ const Settings = () => {
     setMessage(null);
 
     try {
-      let finalAvatarUrl = profile.avatarUrl;
+      let finalAvatarUrl = profile.avatar;
 
-      // Upload to Cloudinary only if a new file was selected
+      // Only upload if user selected a new file
       if (avatarFile) {
         finalAvatarUrl = await uploadToCloudinary(avatarFile, "avatars");
       }
 
       const res = await axios.put(
         `${API_BASE}/user`,
-        { ...profile, avatarUrl: finalAvatarUrl },
+        {
+          ...profile,
+          avatar: finalAvatarUrl, // ✅ match backend field
+        },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -92,6 +95,7 @@ const Settings = () => {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="min-h-screen bg-gradient-subtle">

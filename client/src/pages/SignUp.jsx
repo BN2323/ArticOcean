@@ -3,6 +3,9 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api";
 import {
   Card,
   CardContent,
@@ -19,7 +22,7 @@ const SignUp = () => {
     confirmPassword: ""
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords don't match!");
@@ -27,6 +30,25 @@ const SignUp = () => {
     }
     console.log("Sign up attempt:", formData);
     // TODO: Send data to backend
+    e.preventDefault();
+    setError("");
+
+    try {
+      const response = await axios.post(`${API_BASE}/auth/register`, formData);
+      const { token, user } = response.data;
+
+      // Save token in localStorage
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      // Redirect to feed
+      navigate("/");
+      alert("Register successful!");
+    } catch (err) {
+      console.error("Register failed:", err);
+      setError(err.response?.data?.message || "Register failed");
+      alert("Regiter failed. Please try again.");
+    }
   };
 
   return (
