@@ -13,9 +13,16 @@ const enrichArticles = async (articles, currentUserId) => {
       Bookmark.findOne({ where: { articleId: article.id, userId: currentUserId } }),
     ]);
 
+    const plainArticle = article.toJSON();
+
+    // Remove HTML tags and truncate content to 70 characters
+    if (plainArticle.content) {
+      const noHTML = plainArticle.content.replace(/<[^>]*>/g, '');
+      plainArticle.content = noHTML.length > 70 ? noHTML.slice(0, 70) + '...' : noHTML;
+    }
 
     return {
-      ...article.toJSON(),
+      ...plainArticle,
       totalLikes: likes,
       totalBookmarks: bookmarks,
       totalComments: comments,
