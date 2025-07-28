@@ -73,9 +73,9 @@ const Feed = () => {
   });
 
   useEffect(() => {
-    const fetchArticles = async () => {
+    const fetchFollowingArticles = async () => {
       try {
-        const res = await axios.get(`${apiurl}/feed`, {
+        const res = await axios.get(`${apiurl}/feed/following`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -92,9 +92,9 @@ const Feed = () => {
       }
     };
 
-    const fetchFollowingArticles = async () => {
+    const fetchArticles = async () => {
       try {
-        const res = await axios.get(`${apiurl}/feed/following`, {
+        const res = await axios.get(`${apiurl}/feed`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },

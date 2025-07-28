@@ -21,10 +21,10 @@ const TopHeader = () => {
   return (
     <header className="h-16 flex items-center justify-between border-b border-border bg-background/95 backdrop-blur px-6 sticky top-0 z-40">
       <Link to="/" className="flex items-center space-x-2">
-        <div className="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center">
+        {/* <div className="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center">
           <span className="text-primary-foreground font-bold text-lg">D</span>
-        </div>
-        <span className="text-xl font-bold text-foreground">Deep</span>
+        </div> */}
+        <span className="text-xl font-bold text-foreground">ArticOcean</span>
       </Link>
 
       <div className="flex items-center space-x-3">
