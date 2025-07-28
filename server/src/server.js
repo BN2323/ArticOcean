@@ -11,7 +11,7 @@ const likeRoutes = require("./routes/like");
 const bookmarkRoutes = require("./routes/bookmark");
 const followRoutes = require("./routes/follow");
 const commentRoutes = require("./routes/comment");
-const uploadRoute = require("./routes/upload");
+const uploadRoute = require("./routes/cloudinarySignature");
 
 const app = express();
 
@@ -28,7 +28,7 @@ app.use("/api", likeRoutes);
 app.use("/api", bookmarkRoutes);
 app.use("/api/follow", followRoutes);
 app.use("/api/", commentRoutes);
-app.use('/api/upload', uploadRoute);
+app.use('/api/cloudinary', uploadRoute);
 
 app.get("/", (req, res) => res.send("API Running"));
 

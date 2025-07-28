@@ -152,7 +152,13 @@ const ArticleView = () => {
         {/* Article Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-6 leading-tight">{article.title}</h1>
-
+          {article.thumbnail && (
+            <img
+              src={article.thumbnail}
+              alt="Article thumbnail"
+              className="w-full h-auto rounded-lg mb-6 shadow-sm"
+            />
+          )}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-4">
               <Avatar className="h-12 w-12">

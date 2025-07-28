@@ -114,8 +114,8 @@ const handleBookmark = async () => {
             <AvatarFallback>{author.name.charAt(0)}</AvatarFallback>
           </Avatar>
           <div className="flex-1">
-            <Link 
-              to={`/profile/${author.username}`} 
+            <Link
+              to={`/profile/${author.username}`}
               className="text-sm font-medium text-foreground hover:text-primary transition-smooth"
             >
               {author.name}
@@ -126,7 +126,7 @@ const handleBookmark = async () => {
           </div>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1">
             <Link to={`/article/${id}`}>
               <h2 className="text-xl font-semibold text-foreground mb-2 hover:text-primary transition-smooth line-clamp-2">
@@ -139,18 +139,20 @@ const handleBookmark = async () => {
 
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={handleLike}
-                  className={`text-xs ${isLiked ? 'text-red-500' : 'text-muted-foreground'} hover:text-red-500 transition-smooth`}
+                  className={`text-xs ${
+                    isLiked ? "text-red-500" : "text-muted-foreground"
+                  } hover:text-red-500 transition-smooth`}
                 >
-                  <Heart size={16} className={isLiked ? 'fill-current' : ''} />
+                  <Heart size={16} className={isLiked ? "fill-current" : ""} />
                   <span className="ml-1">{likes}</span>
                 </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={handleComment}
                   className="text-xs text-muted-foreground hover:text-foreground transition-smooth"
                 >
@@ -160,17 +162,19 @@ const handleBookmark = async () => {
               </div>
 
               <div className="flex items-center space-x-2">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={handleBookmark}
-                  className={`${isBookmarked ? 'text-primary' : 'text-muted-foreground'} hover:text-primary transition-smooth`}
+                  className={`${
+                    isBookmarked ? "text-primary" : "text-muted-foreground"
+                  } hover:text-primary transition-smooth`}
                 >
-                  <Bookmark size={16} className={isBookmarked ? 'fill-current' : ''} />
+                  <Bookmark size={16} className={isBookmarked ? "fill-current" : ""} />
                 </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={handleShare}
                   className="text-muted-foreground hover:text-foreground transition-smooth"
                 >
@@ -181,12 +185,8 @@ const handleBookmark = async () => {
           </div>
 
           {image && (
-            <div className="w-24 h-24 rounded-lg overflow-hidden bg-muted shrink-0">
-              <img 
-                src={image} 
-                alt={title}
-                className="w-full h-full object-cover"
-              />
+            <div className="hidden sm:block w-32 h-32 rounded-lg overflow-hidden bg-muted shrink-0 ml-6">
+              <img src={image} alt={title} className="w-full h-full object-cover" />
             </div>
           )}
         </div>
