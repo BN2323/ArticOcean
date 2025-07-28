@@ -18,7 +18,12 @@ exports.getProfile = async (req, res) => {
             model: User,
             as: "likers",
             attributes: ["id"]
-          }
+          },
+          {
+            model: User,
+            as: "author",
+            attributes: ["id", "username", "name", "avatar"],
+          },
         ]
       },
       {
@@ -42,6 +47,7 @@ exports.getProfile = async (req, res) => {
     userJSON.totalLikes = user.articles.reduce((sum, article) => sum + article.likers.length, 0); 
     userJSON.followers = user.followers.length;
     userJSON.following = user.following.length;
+    userJSON.joinDate = moment(userJSON.joinDate).format("MMMM YYYY");
 
     userJSON.articles.forEach(article => {
       delete article.likers;

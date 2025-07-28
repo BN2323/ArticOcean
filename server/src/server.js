@@ -11,21 +11,24 @@ const likeRoutes = require("./routes/like");
 const bookmarkRoutes = require("./routes/bookmark");
 const followRoutes = require("./routes/follow");
 const commentRoutes = require("./routes/comment");
+const uploadRoute = require("./routes/upload");
 
 const app = express();
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // Routes
 app.use("/api/feed", feedRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/article", articleRoutes);
 app.use("/api/user", userRoutes);
-app.use("/api/like", likeRoutes);
-app.use("/api/bookmark", bookmarkRoutes);
+app.use("/api", likeRoutes);
+app.use("/api", bookmarkRoutes);
 app.use("/api/follow", followRoutes);
-app.use("/api/comment", commentRoutes);
+app.use("/api/", commentRoutes);
+app.use('/api/upload', uploadRoute);
 
 app.get("/", (req, res) => res.send("API Running"));
 

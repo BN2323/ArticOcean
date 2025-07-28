@@ -1,14 +1,47 @@
 const { Article, User, Like, Bookmark , Comment} = require("../models");
 const generateExcerpt = require("../utils/generateExcerpt");
+const cloudinary = require('../utils/cloudinary');
+
+// exports.createArticle = async (req, res) => {
+//   try {
+//     const { title, content, thumbnail } = req.body;
+//     const excerpt = generateExcerpt(content); // Generate excerpt from content
+//     const article = await Article.create({ title, excerpt, content, thumbnail, authorId: req.user.id });
+//     console.log("Article created:", article.toJSON());
+//     res.status(201).json(article);
+//   } catch (error) {
+//     res.status(500).json({ message: "Error creating article", error });
+//   }
+// };
 
 exports.createArticle = async (req, res) => {
   try {
     const { title, content, thumbnail } = req.body;
-    const excerpt = generateExcerpt(content); // Generate excerpt from content
-    const article = await Article.create({ title, excerpt, content, thumbnail, authorId: req.user.id });
-    console.log("Article created:", article.toJSON());
+
+    let uploadedThumbnailUrl = '';
+
+    if (thumbnail && thumbnail.startsWith('data:image')) {
+      // Upload base64 string to Cloudinary
+      const uploadRes = await cloudinary.uploader.upload(thumbnail, {
+        folder: 'thumbnails',
+      });
+      uploadedThumbnailUrl = uploadRes.secure_url;
+    } else {
+      uploadedThumbnailUrl = thumbnail; // assume it's already a valid URL
+    }
+
+    const excerpt = generateExcerpt(content);
+    const article = await Article.create({
+      title,
+      excerpt,
+      content,
+      thumbnail: uploadedThumbnailUrl,
+      authorId: req.user.id,
+    });
+
     res.status(201).json(article);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Error creating article", error });
   }
 };
@@ -27,7 +60,7 @@ exports.getArticle = async (req, res) => {
             {
               model: User,
               as: "commenter", // must match the alias
-              attributes: ["id", "username", "avatar"],
+              attributes: ["id", "username", "name", "avatar"],
             },
           ],
           order: [["createdAt", "ASC"]],

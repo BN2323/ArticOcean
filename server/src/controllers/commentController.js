@@ -2,7 +2,7 @@ const { Comment, Article, User } = require('../models');
 
 exports.addComment = async (req, res) => {
   try {
-    const articleId = req.params.id;
+    const articleId = req.params.articleId;
     const userId = req.user.id;
     const { content } = req.body;
 
@@ -41,7 +41,7 @@ exports.getComments = async (req, res) => {
 
 exports.deleteComment = async (req, res) => {
   try {
-    const commentId = req.params.id;
+    const commentId = req.params.articleId;
     const userId = req.user.id;
 
     const comment = await Comment.findByPk(commentId);

@@ -4,12 +4,12 @@ const commentController = require('../controllers/commentController');
 const authenticate = require('../middlewares/authMiddleware'); // your auth middleware
 
 // Add a comment to an article
-router.post('/:id/', authenticate, commentController.addComment);
+router.post('/:articleId/comment', authenticate, commentController.addComment);
 
 // Get comments for an article
-router.get('/:id/', commentController.getComments);
+router.get('/:articleId/comment', commentController.getComments);
 
 // Delete a comment
-router.delete('/:id/', authenticate, commentController.deleteComment);
+router.delete('/:articleId/comment', authenticate, commentController.deleteComment);
 
 module.exports = router;

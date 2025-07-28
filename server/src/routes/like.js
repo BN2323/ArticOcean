@@ -3,7 +3,7 @@ const router = express.Router();
 const authMiddleware = require("../middlewares/authMiddleware");
 const likeController = require("../controllers/likeController");
 
-router.post("/:articleId", authMiddleware, likeController.likeArticle);
-router.delete("/:articleId", authMiddleware, likeController.unlikeArticle);
+router.post("/:articleId/like", authMiddleware, likeController.likeArticle);
+router.delete("/:articleId/like", authMiddleware, likeController.unlikeArticle);
 
 module.exports = router;

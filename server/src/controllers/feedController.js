@@ -83,6 +83,48 @@ exports.getLikedArticles = async (req, res) => {
   }
 };
 
+exports.getFollowingArticles = async (req, res) => {
+  try {
+    const currentUserId = req.user.id;
+
+    const following = await Follow.findAll({
+      where: { followerId: currentUserId },
+      attributes: ['followingId']
+    });
+    const followingIds = following.map(f => f.followingId);
+
+    const followedArticles = await Article.findAll({
+      where: { authorId: { [Op.in]: followingIds } },
+      include: [{ model: User, as: "author", attributes: ["id", "username", "name", "avatar"] }],
+      order: [["createdAt", "DESC"]],
+    });
+
+
+    const enrichedFollowed = await enrichArticles(followedArticles, currentUserId);
+
+    res.json(enrichedFollowed.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+  } catch (err) {
+    res.status(500).json({ message: "Failed to load feed", error: err.message });
+  }
+};
+
+exports.getLikedArticles = async (req, res) => {
+  try {
+    const currentUserId = req.user.id;
+
+    const likedArticles = await req.user.getLikedArticles({
+      include: [{ model: User, as: "author", attributes: ["id", "username", "name", "avatar"] }],
+      order: [["createdAt", "DESC"]],
+    });
+
+    const enriched = await enrichArticles(likedArticles, currentUserId);
+
+    res.json(enriched);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to load liked articles", error: err.message });
+  }
+};
+
 
 exports.getBookmarkedArticles = async (req, res) => {
   try {
@@ -95,7 +137,7 @@ exports.getBookmarkedArticles = async (req, res) => {
 
     const enriched = await enrichArticles(bookmarked, currentUserId);
 
-    res.json({ bookmarked: enriched });
+    res.json(enriched);
   } catch (err) {
     res.status(500).json({ message: "Failed to load bookmarked articles", error: err.message });
   }
